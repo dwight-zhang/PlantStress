@@ -4,9 +4,9 @@
 
 ```
 .
-|--- LQ_ShapeOPT_codes
+|--- LQ_ShapeOPT
 |--- NGSolve
 ```
-## LQ_ShapeOPT_codes
+## LQ_ShapeOPT
 
 
