@@ -1,0 +1,11 @@
+#!/bin/bash
+#SBATCH -J DLD
+#SBATCH -q normal
+#SBATCH -t 01:60:00
+#SBATCH -o %J.out
+#SBATCH -N 1
+#SBATCH --ntasks-per-node 10
+
+export OMPI_MCA_btl_base_warn_component_unused=0   ## 避免运行MEME时出现警告信息
+
+time mpiexec --mca btl_tcp_if_include eth2 python DLD_2D_csg2d.py -a square -N 8 -n 10 -e stokes -R 1 -s TH -p al -u 0.2 -v 0.2 -o vtk
