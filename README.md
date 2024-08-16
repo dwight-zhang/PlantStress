@@ -6,7 +6,7 @@
 .
 |--- MPI_benchmarks
 |--- LQ_ShapeOPT
-|--- NGSolve
+|--- Stress
 ```
 ## LQ_ShapeOPT
 
