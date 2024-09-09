@@ -23,7 +23,7 @@ author:
 
 MOVE_MESH = [True,""]
 LIP = [False,4]
-SCALE = 1e-4
+    SCALE = 1e-4
 IT_MAX = 5000
 TOL_J = np.logspace(-1,-10,10)
 COEFF_CR = [20, 500]
