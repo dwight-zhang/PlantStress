@@ -1,0 +1,40 @@
+/bicmr/soft/anaconda/3-2023.03/lib/python3.10/site-packages/numpy/core/getlimits.py:500: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/bicmr/soft/anaconda/3-2023.03/lib/python3.10/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float64'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+/bicmr/soft/anaconda/3-2023.03/lib/python3.10/site-packages/numpy/core/getlimits.py:500: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  setattr(self, word, getattr(machar, word).flat[0])
+/bicmr/soft/anaconda/3-2023.03/lib/python3.10/site-packages/numpy/core/getlimits.py:89: UserWarning: The value of the smallest subnormal for <class 'numpy.float32'> type is zero.
+  return self._float_to_str(self.smallest_subnormal)
+Newton iteration 1
+energy =  12.900481447166884
+err^2= 3.25755377563364e-33
+Newton iteration 2
+energy =  12.900481447166884
+err^2= 2.3643901866274792e-34
+Newton iteration 3
+energy =  12.900481447166884
+err^2= 7.055513151952904e-34
+Newton iteration 4
+energy =  12.900481447166884
+err^2= 6.9390088060766515e-34
+Newton iteration 5
+energy =  12.900481447166884
+err^2= 7.605842840712586e-34
+Newton iteration 6
+energy =  12.900481447166884
+err^2= 6.931619601144875e-34
+Newton iteration 7
+energy =  12.900481447166884
+err^2= 7.07520469482298e-34
+Newton iteration 8
+energy =  12.900481447166884
+err^2= 6.386496392121646e-34
+Newton iteration 9
+energy =  12.900481447166884
+err^2= 7.516727707471179e-34
+Newton iteration 10
+energy =  12.900481447166884
+err^2= 7.650098811286646e-34
+Starting VTK output.
+VTK output completed. Check 'result.vtu' file.
