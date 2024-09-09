@@ -118,12 +118,12 @@ def cvt_2d_sampling ( g_num = 0, it_num = 0, s1d_num = 0 ):
 #  For each generator, M counts the number of sample points it is nearest to.
 #  Note that for a nonuniform density, we just set W to the density.
 #
-#     w = np.ones ( s_num )
-#     w = np.exp( - 10 * sx**2 - 10 * sy**2 )
+    w = np.ones ( s_num )
+    # w = np.exp( - 10 * sx**2 - 10 * sy**2 )
 #     w = np.exp( - 20 * sx**2 - 20 * sy**2 ) + \
 #         0.05 * np.sin(np.pi * sx)**2 * np.sin(np.pi *sy)**2
-    w = np.exp( - 40 * sx**2 - 40 * sy**2 ) + \
-        0.01 * np.sin(np.pi * sx)**2 * np.sin(np.pi *sy)**2
+    # w = np.exp( - 40 * sx**2 - 40 * sy**2 ) + \
+        # 0.01 * np.sin(np.pi * sx)**2 * np.sin(np.pi *sy)**2
     m = np.bincount ( k, weights = w )
 #
 #  G is the average of the sample points it is nearest to.
@@ -188,7 +188,7 @@ def cvt_2d_sampling_test ( ):
   print ( '  Python version: %s' % ( platform.python_version ( ) ) )
   print ( '  Test cvt_2d_sampling()' )
 
-  cvt_2d_sampling ( 64, 50, 100 )
+  cvt_2d_sampling ( 24, 20, 10)
 #
 #  Terminate.
 #
