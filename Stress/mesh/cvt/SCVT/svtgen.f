@@ -746,7 +746,7 @@ C
 C   Given a Delaunay triangulation of nodes on the surface
 C of the unit sphere, this subroutine returns the set of
 C triangle circumcenters corresponding to Voronoi vertices,
-C along with the circumradii and a list of triangle indexes
+C along with the circumradii and a list of triangle indexes1                                                
 C LISTC stored in one-to-one correspondence with LIST/LPTR
 C entries.
 C
