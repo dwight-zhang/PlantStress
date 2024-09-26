@@ -80,9 +80,9 @@
 
 \section{Stress feedback model}
 Assume cell wall is a smooth surface $S \subset \mathbf{R}^{3} $, $\bm{n}$ is the exterior normal vector to $S$.
-Define the deformation is $\bm{u}$, its tangential gradient is denoted by $\nabla_{S} \bm{u} = \bm{n} \times (\nabla \bm{u} \times \bm{n}) $.
+Define the deformation is $\bm{u}$, its gradient is denoted by $\nabla \bm{u}$.
 Green-Lagrangian strain tensor is defined by 
-$\mathbb{E} = \frac{1}{ 2 } \left(\nabla_{S}\bm{u}^{\top} \nabla_{S}  \bm{u} - \mathbb{I}\right)$.
+$\mathbb{E} = \frac{1}{ 2 } \left(\nabla \bm{u}^{\top} \nabla \bm{u} - \mathbb{I}\right)$.
 The motified St. Venant-Kirchhoff model is given by
 \begin{align}\label{VK_model}
   \mathcal{E} = \int_S \mathbb{E} : \left(\mathbb{C} \right)\mathbb{E} +  \int_{S} \left( (\nabla \bm{u} - P \mathbb{I})\bm{n}\right)^{2} , 

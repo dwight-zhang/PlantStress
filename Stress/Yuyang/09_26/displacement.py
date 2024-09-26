@@ -34,14 +34,13 @@ Pout = 1
 #---------------- FESpace ------------------      
 fes = H1(mesh, order=orderset,  dirichlet="down|top", dim=dimset)
 u = fes.TrialFunction()
-nsurf = -specialcf.normal(3)
+nsurf = -specialcf.normal(dimset)
 
 #-------------------- energy function --------------------------
 a = BilinearForm(fes, symmetric=False, check_unused=False)
 u_grad = grad(u).Trace()
-Sgradu = u_grad - u_grad * OuterProduct(nsurf, nsurf)
-Eu = 1/2*(Sgradu.trans * Sgradu - Id(dimset))
-Cg = CoefficientFunction(((Yg,v*Yg,0),(Yg,v*Yg,0),(0,0,Yg*(v-1)/2)),dims=(3,3))
+Eu = 1/2*(u_grad.trans * u_grad - Id(dimset))
+Cg = CoefficientFunction(((Yg,v*Yg,0),(Yg,v*Yg,0),(0,0,Yg*(v-1)/2)),dims=(dimset,dimset))
 Phi = Eu.trans * (Cg * Eu)
 a += Variation(Trace(Phi).Compile()*ds)
 ngradu = u_grad.trans * nsurf
@@ -52,7 +51,6 @@ a += Variation((ngradu-beta)*(ngradu-beta)*ds(definedon=fes.mesh.Boundaries("sph
 u = GridFunction(fes)
 du = GridFunction(fes)
 res = u.vec.CreateVector()
-# ini = CoefficientFunction([sin(x*x*y*y)*z*(1.1-z)*nsurf if bc == 'sph' else (0,0,0) for bc in mesh.GetBoundaries()])
 ini = CoefficientFunction([sin(x*x*y*y)*z*(1.1-z)*nsurf])
 u.Set(ini,definedon=fes.mesh.Boundaries("sph"))
 Draw(u, mesh, 'displacement')
