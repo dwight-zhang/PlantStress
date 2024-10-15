@@ -41,13 +41,17 @@ orderset = 2
 dimset = mesh.dim
 fes = H1(mesh, order=orderset,  dirichlet="down", dim=dimset)
 u = fes.TrialFunction()
+v = fes.TestFunction()
 nsurf = specialcf.normal(dimset)
 
-#-------------------- energy function --------------------------
+#--------------- Bilinear and liner form ----------------
 # penalty = 1e4
 u_grad = grad(u).Trace()
-Eu = 1/2*(u_grad.trans +  u_grad)
-Cg = CoefficientFunction(((Yg,v*Yg,0),(v*Yg,Yg,0),(0,0,Yg*(1-v)/2)),dims=(dimset,dimset))
+Eu = 1/2*(u_grad.trans +  u_grad) - Id(dimset)
+Cg = CoefficientFunction(((Yg,v*Yg,0),
+                          (v*Yg,Yg,0),
+                          (0,0,Yg*(1-v)/2)),
+                          dims = (dimset,dimset))
 Phi = Eu.trans * (Cg * Eu)
 ngradu = u_grad * nsurf
 beta = Pout * nsurf
@@ -65,7 +69,7 @@ u.Set(ini,definedon=fes.mesh.Boundaries("pz|cz"))
 Draw(u, mesh, 'displacement')
 input("Initiate Done!")
 
-#------------------- damped Newton ---------------------
+#------------------- FEM Solver ---------------------
 step = 1
 for i in range(50):
    print ("Damped Newton iteration", i+1)
