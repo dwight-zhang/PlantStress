@@ -6,11 +6,12 @@ from netgen.meshing import ImportMesh
 from netgen.meshing import FaceDescriptor
 import numpy as np
 from scipy.integrate import quad
+from scipy.linalg import eigh
 
 #---------------- meshing ------------------
 R = 1
 pz_down = 0.0
-cz_down = 0.75
+cz_down = 0.8
 geo = CSGeometry()
 sph1 = Sphere(Pnt(0, 0, 0), R).bc("pz")
 sph2 = Sphere(Pnt(0, 0, 0), R).bc("cz")
@@ -18,15 +19,11 @@ down = Plane(Pnt(0, 0, pz_down), Vec(0, 0, -1)).bc("down")
 top = Plane(Pnt(0, 0, cz_down), Vec(0, 0, -1)).bc("top")
 sph1down = sph1 * down
 sph2top = sph2 * top
-pt = sph1down - sph2top 
+pt = sph1down - sph2top
 geo.AddSurface(sph1, pt)
 geo.AddSurface(down, pt)
 geo.AddSurface(sph2, sph2top)
-<<<<<<< HEAD
-ngmesh = geo.GenerateMesh(maxh=0.05)
-=======
 ngmesh = geo.GenerateMesh(maxh=0.1)
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
 mesh = Mesh(ngmesh)
 mesh.Curve(2)
 Draw(mesh)
@@ -34,92 +31,74 @@ input("Mesh Done!")
 
 #---------------- parameters ------------------
 Pi = np.pi
-v = 0.5
-pzofcz = 0.3
-<<<<<<< HEAD
-Yg_cz = 1e-1
-Pout = 0.1
-=======
+nu = 0.5
+pzofcz = 0.25
 Yg_cz = 1
-Pout = 1
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
+Pout = 0.2
 Yg = CoefficientFunction([ pzofcz * Yg_cz if bc == "pz" else Yg_cz for bc in mesh.GetBoundaries()])
+Draw(Yg, mesh, "stiff")
+input("Stiff Done!")
 
 #---------------- FESpace ------------------      
 orderset = 2
 dimset = mesh.dim
 fes = H1(mesh, order=orderset,  dirichlet="down", dim=dimset)
-u = fes.TrialFunction()
-<<<<<<< HEAD
-v = fes.TestFunction()
-nsurf = specialcf.normal(dimset)
-
-#--------------- Bilinear and liner form ----------------
-# penalty = 1e4
-=======
-nsurf = specialcf.normal(dimset)
 
 #-------------------- energy function --------------------------
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
-u_grad = grad(u).Trace()
-Eu = 1/2*(u_grad.trans +  u_grad) - Id(dimset)
-Cg = CoefficientFunction(((Yg,v*Yg,0),
-                          (v*Yg,Yg,0),
-                          (0,0,Yg*(1-v)/2)),
-                          dims = (dimset,dimset))
-Phi = Eu.trans * (Cg * Eu)
-<<<<<<< HEAD
-ngradu = u_grad * nsurf
-beta = Pout * nsurf
-Force = CoefficientFunction((0,0,1))
-a = BilinearForm(fes, symmetric=False, check_unused=False)
-a += Variation(Trace(Phi).Compile()*ds(definedon=fes.mesh.Boundaries("pz|cz")))
-a += Variation((InnerProduct(- Pout * nsurf,u))*ds(definedon=fes.mesh.Boundaries("pz|cz")))
-=======
-ngradu = u_grad.trans * nsurf
-beta = Pout*nsurf
-a = BilinearForm(fes, symmetric=False, check_unused=False)
-a += Variation(Trace(Phi).Compile()*ds(definedon=fes.mesh.Boundaries("pz|cz")))
-a += Variation((ngradu-beta)*(ngradu-beta)*ds(definedon=fes.mesh.Boundaries("pz|cz")))
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
+def SolveLEPDE(fes, Yg, nu, Pout):
+    # TeTfunctions
+    u = fes.TrialFunction()
+    v = fes.TestFunction()
 
-#------------------- grid functions ---------------------
-u = GridFunction(fes)
-du = GridFunction(fes)
-res = u.vec.CreateVector()
-<<<<<<< HEAD
-ini = CoefficientFunction(Pout*(z-pz_down)*nsurf)
-=======
-ini = CoefficientFunction([sin(x**2*y**2)*(z-pz_down)*(cz_down-z)*nsurf if bc == "pz" else
-                           (z-cz_down)*(R-z)*nsurf for bc in mesh.GetBoundaries()])
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
-u.Set(ini,definedon=fes.mesh.Boundaries("pz|cz"))
-Draw(u, mesh, 'displacement')
-input("Initiate Done!")
+    # bilinear form
+    lame1 = Yg / (2 * (1 + nu))
+    lame2 = Yg  * nu /( (1 + nu) * ( 1 - 2 * nu))
+    u_grad = grad(u).Trace()
+    v_grad = grad(v).Trace()
+    u_div = Trace(u_grad * Id(dimset)).Compile()
+    v_div = Trace(u_grad * Id(dimset)).Compile()
+    a = BilinearForm(fes, symmetric=True, check_unused=False)
+    a += lame1 * InnerProduct(u_grad, v_grad) * ds
+    a += lame2 * u_div * v_div * ds
+    a.Assemble()
 
-<<<<<<< HEAD
-#------------------- FEM Solver ---------------------
-=======
-#------------------- damped Newton ---------------------
->>>>>>> 03801d0bc800b9709bfe00cf7241885cb17c934e
-step = 1
-for i in range(50):
-   print ("Damped Newton iteration", i+1)
-   print ("  energy = ", a.Energy(u.vec))
-   a.Apply(u.vec, res) 
-   a.AssembleLinearization(u.vec)
-   du.vec.data = a.mat.Inverse(fes.FreeDofs()) * res
-   r =  InnerProduct(du.vec, res)
-   print ("  err^2 =", abs(r))
-   u.vec.data -= step * du.vec.data
-   # Draw(u, mesh, 'displacement')
-   # input("  iteration done!")
-   if abs(r) < 1e-6:
-       break
+    # linear form
+    nsurf = specialcf.normal(dimset)
+    force = Pout * nsurf
+    f = LinearForm(fes)
+    f += force*v*ds
+    f.Assemble()
 
+    # initial gridfunction and solve equation
+    gfu = GridFunction(fes)
+    gfu.vec.data = a.mat.Inverse(fes.FreeDofs())*f.vec
 
-u_grad = grad(u).Trace()
-Eu = 1/2*(u_grad.trans * u_grad - Id(dimset))
-print(u_grad)
-Draw( Eu, mesh, 'strain')
-input("Done!")
+    return gfu
+
+#------------------- deformation functions ---------------------
+gfu = GridFunction(fes)
+gfu = SolveLEPDE(fes, Yg, nu, Pout)
+
+#------------------- strain functions ---------------------
+u_grad = grad(gfu)
+I = Id(dimset)
+lame1 = Yg / (2 * (1 + nu))
+lame2 = Yg  * nu /( (1 + nu) * ( 1 - 2 * nu))
+# E = lame1 * (u_grad.trans + u_grad - 2 * I) + lame2 * InnerProduct((u_grad.trans - I),I ) * I
+E = lame1 * (u_grad.trans + u_grad - 2 * I) 
+gfw = GridFunction(fes)
+for v in mesh.vertices:
+    vp = np.array(v.point)
+    p = mesh(vp[0],vp[1],vp[2])
+    array_E = np.array(E(p)).T
+    new_E = array_E.reshape(3,3)
+    w = eigh(new_E, eigvals_only=True)
+    for j in range(3):
+        gfw.vec[v.nr][j] = w[j]
+Draw(gfu, mesh, "deform")
+Draw(gfw, mesh, "strain")
+nsurf = specialcf.normal(dimset)
+surf = (I - OuterProduct(nsurf, nsurf))* gfw
+Draw(surf, mesh, "surf")
+input("Strain done!")
+

@@ -161,83 +161,92 @@ In the Voigt matrix form, the above relation can be written as
 \[
 \left[
 \begin{array}{c}
-\mathbb{P}_{1} \\
-\mathbb{P}_{2} \\
-\mathbb{P}_{3} \\
-\mathbb{P}_{4} \\
-\mathbb{P}_{5} \\
-\mathbb{P}_{6} \\
+\mathbb{P}_{11} \\
+\mathbb{P}_{22} \\
+\mathbb{P}_{33} \\
+\mathbb{P}_{23} \\
+\mathbb{P}_{13} \\
+\mathbb{P}_{12} \\
+\end{array}
+\right] 
+= 
+\left[
+\begin{array}{cccccc}
+2 \mu + \lambda & \lambda & \lambda & 0 & 0 & 0 \\
+\lambda & 2 \mu + \lambda & \lambda & 0 & 0 & 0 \\
+\lambda & \lambda & 2 \mu + \lambda & 0 & 0 & 0 \\
+0 & 0 & 0 & \mu & 0 & 0 \\
+0 & 0 & 0 & 0 & \mu & 0 \\
+0 & 0 & 0 & 0 & 0 & \mu \\
+\end{array}
+\right]
+\left[
+\begin{array}{c}
+\bm{\epsilon}_{11} \\
+\bm{\epsilon}_{22} \\
+\bm{\epsilon}_{33} \\
+2\bm{\epsilon}_{23} \\
+2\bm{\epsilon}_{13} \\
+2\bm{\epsilon}_{12} \\
+\end{array}
+\right] 
+\] 
+where the transition matrix in the above equality can written as:
+\[
+\frac{ k }{ \left(1+\nu\right) \left(1-2\nu\right) } 
+\left[
+\begin{array}{cccccc}
+1 - \nu & \nu & \nu & 0 & 0 & 0 \\
+\nu & 1 - \nu & \nu & 0 & 0 & 0 \\
+\nu & \nu & 1 - \nu & 0 & 0 & 0 \\
+0 & 0 & 0 & \frac{ 1-2\nu }{2 }  & 0 & 0 \\
+0 & 0 & 0 & 0 & \frac{ 1-2\nu }{ 2 }  & 0 \\
+0 & 0 & 0 & 0 & 0 & \frac{ 1-2\nu }{ 2 }  \\
 \end{array}
 \right]
 \] 
 
-
-The motified St. Venant-Kirchhoff model is given by
-\begin{align}\label{VK_model}
-  \mathcal{E} = \int_S \mathbb{E} : \left(\mathbb{C} \right)\mathbb{E} +  \int_{S} \left( (\nabla \bm{u} - P \mathbb{I})\bm{n}\right)^{2} , 
-\end{align}
-where $\mathbb{C} = \mathbb{C}_{g} + \mathbb{C}_{f}$
-$\mathbb{C}_{g} , \mathbb{C}_{f} $ respectively are the stiffness matrixes for the gel and fiber,
-\[
-\mathbb{C}_{g} = Y_{g} \left(
-\begin{array}{ccc}
-  1 & \nu & 0 \\
-  \nu & 1 & 0 \\
-  0 & 0 & \frac{ 1-\nu }{ 2 } 
-\end{array}
-\right), \quad
-\mathbb{C}_{f}  = \frac{ \pi Y_{f} \rho_0 }{ 16 } \left(
-\begin{array}{ccc}
-  3 + \frac{ \rho_2 + 4 \rho_1 }{\rho_0 } & 1- \frac{ \rho_2 }{  \rho_0 } & \frac{ 2\widetilde{\rho_1} + \widetilde{\rho_2}}{\rho_0  }  \\
-  1- \frac{ \rho_2 }{  \rho_0 } &  3 + \frac{ \rho_2 - 4 \rho_1 }{\rho_0 } & \frac{ 2\widetilde{\rho_1} - \widetilde{\rho_2}}{\rho_0  }  \\
-  \frac{ 2\widetilde{\rho_1} + \widetilde{\rho_2}}{\rho_0  }  & \frac{ 2\widetilde{\rho_1} - \widetilde{\rho_2}}{\rho_0  } &   1- \frac{ \rho_2 }{  \rho_0 } 
-\end{array}
-\right),
-\] 
-$P$ is the pressure per unit volume applied to the surface, $\nu,Y_{g} , Y_{f} $ are constants,
-$\rho(\theta)$ is $\pi$-periodic angular microfibril distribution function, $\{\widehat{\rho_{n}}(t)\}_{n=0}^{2}  $ are the Fourier transform coefficients given by
-\[
-\widehat{\rho_{n}}  = \frac{1}{ \pi } \int_{0} ^{\pi} \rho(t, \theta) e^{-2in\theta} d\theta, \quad 
-\left(\rho_{n} , \widetilde{\rho_{n} }\right) = 2 \left( \text{Re} \left(\widehat{\rho_{h} }\right), - \text{Im} \left( \widehat{\rho_{n} }\right)\right).
-\] 
-$\phi(\theta) $ is $\pi$-periodic angular microtubule distribution function.
-We have the following evolution and equilibrium equation for angular microfibril and microtubul distribution.
+\subsection{The PDE form of linear elasticity}
+Assume an externally applied force distribution $\bm{f}_{\rm ext} $.
+When the object has settled to an equilibrium (rest) configuration, the deformation function will satisfy: 
 \begin{align}
-&  \frac{d \rho (\theta)}{d t}   = k_\rho \frac{\phi(\theta)}{\int_0^\pi \phi(\theta') d \theta'}  - k_\rho^{'}\rho(t, \theta),\\
-&  \phi(\theta)   = \frac{c_0 k_\phi e^{\gamma f(\mathbb{C} \mathbb{E}, \theta)}}{1 + k_\phi \int_0^\pi e^{ \gamma f(\mathbb{C}\mathbb{E},\theta')} d \theta'}, 
-\quad  f(\mathbb{C}  \mathbb{E}, \theta)  = \bm{e}_\theta^{\top}   \left (\mathbb{C}  \mathbb{E} \right)  \bm{e}_\theta.
+  \text{div} \mathbb{P}  = \bm{f}_{\rm ext},  
 \end{align}
-where $\mathbb{C} = \mathbb{C}_{g} + \mathbb{C}_{f} $, $c_0, \gamma, k_\phi, k_\rho, k_\rho^{'}$ are suitable positive constants.
-By Fourier transform, we have 
+which can lead to the following formulation:
 \begin{align}
-& \frac{ d \widehat{\rho_{n}} }{ d t }  = \frac{ k_{\rho}  }{ \pi } \frac{ \widehat{\phi_{n} } }{ {\phi_{0} } } - k_{\rho} ^{'} \widehat{\rho_{n} },  \quad 
-\widehat{\phi_{n}} = \frac{1}{ \pi } \int_{0} ^{\pi} \phi(\theta) e^{-2in\theta} d\theta, \\
-& \widehat{\phi_{n}}  = \frac{ c_0 }{ \pi } \frac{ I_{n} \left(2 \gamma \left|\widehat{f_1}\right|\right) }{ { e^{-\gamma f_0} }/( \pi k_{\phi}  ) + I_0 \left( 2 \gamma \left| \widehat{f_1} \right|\right)  } e^{-2in\theta^*}, \quad 
-\widehat{f_1} = \frac{ 1 }{ \pi } \int_{0} ^{\pi} f(\mathbb{C}\mathbb{E},\theta) e^{-2i\theta} d \theta,
+  - \mu \Delta \bm{u} 
+  - \left(\mu + \lambda\right) \nabla 
+  \left( \text{div} \bm{u} \right) 
+  = \bm{f}_{\rm ext} .
 \end{align}
-where $\theta^* $ is the direction of the main stress, $I_{n}$ is the following modified Bessel function of the first kind.
+
+Numerical experiments:
+\begin{figure}[!tbh]
+\includegraphics[width=3in]{./figures/k.png}
+\end{figure}
+
 \[
-I_{n} (x)  = \frac{ 1 }{ \pi } \int_{0} ^\pi e^{x \cos(\theta)} \cos ( n \theta )d \theta \quad \forall x \in \mathbf{R},
+\nu = 0.5, 
+k = 
+\begin{cases}
+1 \quad \text{in}\quad \text{CZ},\\
+0.25 \quad \text{in} \quad \text{PZ},
+\end{cases}
+\bm{f} = 0.2 \bm{n}.
 \] 
 
-\newpage 
 
-\section{Weak formulation}
 
-For a bounded surface domain $S \subset \mathbf{R}^{3} $, let the inner product on $L^{2} (S)$ be denoted by 
-\[
-  (u,v)_{S} = \int_{S} uv,\quad \forall u, v \in L^{2} (S).
-\] 
-For $\Gamma \subset \partial S$, the sub-space of $H^{1} (S)$ with homogeneous boundary conditions on $\Gamma$ is denoted by
-\[
-H^{1} _{\Gamma} (S) = \left\{ v \in H^{1} (S): v = 0 \quad \text{on } \quad \Gamma\right\}.
-\] 
-Moreover, vector-valued and matrix-valed quantities will be denoted by boldface and hollow notations, respectively, such as $\bm{L}^{2} (S) = \left(L^{2} (S)\right)^{3}, \mathbb{L}^{2} (S) = \left(L^{2} (S)\right) ^{3 \times 3} $.
+\begin{figure}
+\includegraphics[width=4in]{./figures/deform.png}
+\includegraphics[width=3in]{./figures/surfa.png}
+\includegraphics[width=3.5in]{./figures/surfv.png}
+\end{figure}
 
-The weak formulation of problem 
+
+
+%% end of subsection{The PDE of linear elasticity}
+
 
 
 \end{document}
-%------------------------------------------------------------------------------
-% End of tex
-%------------------------------------------------------------------------------
