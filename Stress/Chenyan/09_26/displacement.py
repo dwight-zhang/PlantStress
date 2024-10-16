@@ -16,7 +16,7 @@ geo = CSGeometry()
 sph1 = Sphere(Pnt(0, 0, 0), R).bc("pz")
 sph2 = Sphere(Pnt(0, 0, 0), R).bc("cz")
 down = Plane(Pnt(0, 0, pz_down), Vec(0, 0, -1)).bc("down")
-top = Plane(Pnt(0, 0, cz_down), Vec(0, 0, -1)).bc("top")
+top = Plane(Pnt(0, 0.5, cz_down), Vec(0, -1, -1)).bc("top")
 sph1down = sph1 * down
 sph2top = sph2 * top
 pt = sph1down - sph2top
@@ -78,27 +78,46 @@ def SolveLEPDE(fes, Yg, nu, Pout):
 #------------------- deformation functions ---------------------
 gfu = GridFunction(fes)
 gfu = SolveLEPDE(fes, Yg, nu, Pout)
-
+Draw(gfu, mesh, "deform")
 #------------------- strain functions ---------------------
 u_grad = grad(gfu)
 I = Id(dimset)
 lame1 = Yg / (2 * (1 + nu))
 lame2 = Yg  * nu /( (1 + nu) * ( 1 - 2 * nu))
-# E = lame1 * (u_grad.trans + u_grad - 2 * I) + lame2 * InnerProduct((u_grad.trans - I),I ) * I
-E = lame1 * (u_grad.trans + u_grad - 2 * I) 
-gfw = GridFunction(fes)
-for v in mesh.vertices:
-    vp = np.array(v.point)
-    p = mesh(vp[0],vp[1],vp[2])
-    array_E = np.array(E(p)).T
-    new_E = array_E.reshape(3,3)
-    w = eigh(new_E, eigvals_only=True)
-    for j in range(3):
-        gfw.vec[v.nr][j] = w[j]
-Draw(gfu, mesh, "deform")
+E = 0.5 * (u_grad.trans + u_grad - 2 * I) 
+P = 2 * lame1 * E + lame2 * Trace(E).Compile() * I
+
+#------------------- Eig for strain ---------------------
+# gfw = GridFunction(fes)
+# for v in mesh.vertices:
+#     vp = np.array(v.point)
+#     p = mesh(vp[0],vp[1],vp[2])
+#     array_E = np.array(P(E))
+#     new_E = array_E.reshape(3,3)
+#     w = eigh(new_E, eigvals_only=True)
+#     for j in range(3):
+#         gfw.vec[v.nr][j] = w[j]
+        
+# #------------------- Draw ---------------------
+# Draw(gfu, mesh, "deform")
+# Draw(gfw, mesh, "strain")
+# nsurf = specialcf.normal(dimset)
+# surf = (I - OuterProduct(nsurf, nsurf))* gfw
+# Draw(surf, mesh, "surf_strain")
+# RP = P.Reshape((3,3))
+
+# gfw = (E.Eig()[9], E.Eig()[10], E.Eig()[11])
+eig_stresses = E.Eig()
+max_princ = IfPos(eig_stresses[9]-eig_stresses[10],
+              IfPos(eig_stresses[9]-eig_stresses[11],eig_stresses[9],eig_stresses[11]),
+              IfPos(eig_stresses[10]-eig_stresses[11],eig_stresses[10],eig_stresses[11]))
+min_princ = IfPos(eig_stresses[9]-eig_stresses[10],
+              IfPos(eig_stresses[10]-eig_stresses[11],eig_stresses[11],eig_stresses[10]),
+              IfPos(eig_stresses[9]-eig_stresses[11],eig_stresses[11],eig_stresses[9]))
+middle_princ = eig_stresses[9]+eig_stresses[10]+eig_stresses[11] - max_princ - min_princ
+gfw = (min_princ, middle_princ, max_princ)
 Draw(gfw, mesh, "strain")
 nsurf = specialcf.normal(dimset)
 surf = (I - OuterProduct(nsurf, nsurf))* gfw
-Draw(surf, mesh, "surf")
-input("Strain done!")
-
+Draw(surf, mesh, "surf_strain")
+input("Stress done!")
